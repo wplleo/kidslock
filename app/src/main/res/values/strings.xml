@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">儿童锁屏</string>
+    <string name="app_description">儿童电视锁屏 · 认字解锁</string>
+
+    <!-- Lock Screen -->
+    <string name="screen_locked">屏幕已锁定</string>
+    <string name="what_pronounce">这个字读什么？</string>
+    <string name="parent_unlock">家长解锁</string>
+
+    <!-- PIN -->
+    <string name="enter_pin">请输入家长PIN码</string>
+    <string name="pin_clear">清除</string>
+    <string name="pin_back">返回</string>
+
+    <!-- Settings -->
+    <string name="settings_title">儿童锁屏设置</string>
+    <string name="section_timer">计时控制</string>
+    <string name="section_config">参数配置</string>
+    <string name="btn_start_timer">开始计时</string>
+    <string name="btn_stop_timer">停止计时</string>
+    <string name="btn_lock_now">立即锁屏</string>
+    <string name="btn_unlock">解锁</string>
+    <string name="btn_set_pin">设置家长PIN</string>
+
+    <!-- Notification -->
+    <string name="notif_title">儿童锁屏运行中</string>
+    <string name="notif_remaining">剩余观看时间</string>
+    <string name="channel_name">儿童锁屏计时</string>
+    <string name="channel_desc">观看时间计时通知</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TV 尺寸适配 -->
+    <dimen name="tv_margin_h">48dp</dimen>
+    <dimen name="tv_margin_v">32dp</dimen>
+
+    <!-- 文字大小 -->
+    <dimen name="text_title">32sp</dimen>
+    <dimen name="text_subtitle">24sp</dimen>
+    <dimen name="text_body">20sp</dimen>
+    <dimen name="text_button">22sp</dimen>
+    <dimen name="text_pin">28sp</dimen>
+
+    <!-- 锁屏汉字特大 -->
+    <dimen name="text_hanzi">180sp</dimen>
+
+    <!-- 按钮 -->
+    <dimen name="btn_height">56dp</dimen>
+    <dimen name="btn_min_width">120dp</dimen>
+    <dimen name="btn_corner">8dp</dimen>
+    <dimen name="btn_margin">8dp</dimen>
+
+    <!-- 间距 -->
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+</resources>

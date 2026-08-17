@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV Banner: 320dp x 180dp -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- 背景 -->
+    <path android:pathData="M0,0h320v180h-320z" android:fillColor="#0D1B2A" />
+
+    <!-- 左侧锁图标 -->
+    <group android:translateX="40" android:translateY="50">
+        <!-- 锁体 -->
+        <path
+            android:pathData="M10,40 h60 v45 h-60 z M20,40 v-15 a20,20 0 0 1 40,0 v15"
+            android:strokeColor="#E0E1DD"
+            android:strokeWidth="4"
+            android:fillColor="#1B263B" />
+        <!-- 锁孔 -->
+        <path
+            android:pathData="M38,55 a5,5 0 0 1 4,4 v8 h4 v-8 a5,5 0 0 1 4,-4 a8,8 0 1 0 -12,0 z"
+            android:fillColor="#E0E1DD" />
+    </group>
+
+    <!-- 文字 -->
+    <path
+        android:pathData="M130,90 h160 v8 h-160 z"
+        android:fillColor="#778DA9" />
+    <path
+        android:pathData="M130,70 h120 v6 h-120 z"
+        android:fillColor="#E0E1DD" />
+    <path
+        android:pathData="M130,110 h140 v6 h-140 z"
+        android:fillColor="#778DA9" />
+</vector>

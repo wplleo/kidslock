@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色系 -->
+    <color name="bg_dark">#0D1B2A</color>
+    <color name="bg_surface">#1B263B</color>
+    <color name="bg_surface_light">#243447</color>
+    <color name="primary">#415A77</color>
+    <color name="accent">#E0E1DD</color>
+    <color name="highlight">#778DA9</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#E0E1DD</color>
+    <color name="text_secondary">#778DA9</color>
+
+    <!-- 状态色 -->
+    <color name="correct_green">#2A9D5C</color>
+    <color name="wrong_red">#E63946</color>
+    <color name="warning_orange">#F4A261</color>
+
+    <!-- 按钮 -->
+    <color name="btn_normal">#1B263B</color>
+    <color name="btn_focused">#415A77</color>
+    <color name="btn_focused_border">#778DA9</color>
+    <color name="btn_text">#E0E1DD</color>
+
+    <!-- 背景 -->
+    <color name="lock_bg">#0D1B2A</color>
+    <color name="settings_bg">#0D1B2A</color>
+</resources>

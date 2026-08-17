@@ -1,0 +1,23 @@
+# Gradle 构建产物
+.gradle/
+build/
+app/build/
+
+# 本地配置（含 SDK 路径，勿提交）
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# 签名密钥（包含密码，绝对不可公开！）
+*.keystore
+*.jks
+
+# 测试截图
+test_screens/
+
+# WorkBuddy 项目数据（含构建笔记，勿公开）
+.workbuddy/
+
+# 调试版 APK（只发布正式版）
+kidslock-debug.apk

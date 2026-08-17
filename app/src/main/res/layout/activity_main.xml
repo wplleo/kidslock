@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/tv_margin_h"
+        android:gravity="center_horizontal">
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_title"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/spacing_medium" />
+
+        <!-- 状态 -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <TextView
+            android:id="@+id/tvRemaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/highlight"
+            android:textSize="@dimen/text_body"
+            android:layout_marginBottom="@dimen/spacing_large" />
+
+        <!-- ===== 计时控制 ===== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/section_timer"
+            android:textColor="@color/highlight"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <Button
+                android:id="@+id/btnStartTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="@dimen/btn_min_width"
+                android:text="@string/btn_start_timer"
+                android:textSize="@dimen/text_button"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/btnStopTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="@dimen/btn_min_width"
+                android:text="@string/btn_stop_timer"
+                android:textSize="@dimen/text_button"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/btnLockNow"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="@dimen/btn_min_width"
+                android:text="@string/btn_lock_now"
+                android:textSize="@dimen/text_button"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/btnUnlock"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="@dimen/btn_min_width"
+                android:text="@string/btn_unlock"
+                android:textSize="@dimen/text_button"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <!-- ===== 参数配置 ===== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/section_config"
+            android:textColor="@color/highlight"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 开机自启 -->
+        <Button
+            android:id="@+id/btnAutoStart"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginBottom="@dimen/spacing_medium"
+            android:minWidth="300dp"
+            android:textSize="@dimen/text_button"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
+
+        <!-- 观看时长 -->
+        <TextView
+            android:id="@+id/tvWatchTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_body"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <Button android:id="@+id/btnTime15"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="15分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnTime30"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="30分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnTime45"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="45分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnTime60"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="60分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnTime90"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="90分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnTime120"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="120分钟"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <!-- 解锁题数 -->
+        <TextView
+            android:id="@+id/tvUnlockCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_body"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/spacing_medium">
+
+            <Button android:id="@+id/btnUnlock3"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="3题"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnUnlock5"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="5题"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+            <Button android:id="@+id/btnUnlock10"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_height"
+                android:layout_margin="@dimen/btn_margin"
+                android:minWidth="80dp"
+                android:text="10题"
+                android:textSize="@dimen/text_body"
+                android:background="@drawable/btn_settings_bg"
+                android:textColor="@color/btn_text"
+                android:focusable="true"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <!-- 设置PIN -->
+        <Button
+            android:id="@+id/btnSetPin"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:minWidth="300dp"
+            android:text="@string/btn_set_pin"
+            android:textSize="@dimen/text_button"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
+
+        <!-- 说明文字 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="默认PIN码：1234"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:layout_marginTop="@dimen/spacing_large" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="计时开始后，到时自动锁屏\n重启电视后仍保持锁屏\n解锁需连续答对五年级水平汉字"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+</ScrollView>

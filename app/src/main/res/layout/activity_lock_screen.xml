@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lock_bg">
+
+    <!-- ===================== 认字主界面 ===================== -->
+    <LinearLayout
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/tv_margin_h">
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/screen_locked"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/text_title"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 汉字显示 -->
+        <TextView
+            android:id="@+id/tvCharacter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_hanzi"
+            android:textStyle="bold"
+            android:layout_marginVertical="@dimen/spacing_medium" />
+
+        <!-- 提问 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/what_pronounce"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginBottom="@dimen/spacing_large" />
+
+        <!-- 选项按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginHorizontal="@dimen/tv_margin_h">
+
+            <Button
+                android:id="@+id/btnOption1"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@drawable/btn_option_bg"
+                android:textColor="@color/btn_text"
+                android:textSize="@dimen/text_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:nextFocusLeft="@id/btnOption4"
+                android:nextFocusRight="@id/btnOption2" />
+
+            <Button
+                android:id="@+id/btnOption2"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@drawable/btn_option_bg"
+                android:textColor="@color/btn_text"
+                android:textSize="@dimen/text_button"
+                android:focusable="true"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/btnOption3"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@drawable/btn_option_bg"
+                android:textColor="@color/btn_text"
+                android:textSize="@dimen/text_button"
+                android:focusable="true"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/btnOption4"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/btn_height"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/btn_margin"
+                android:background="@drawable/btn_option_bg"
+                android:textColor="@color/btn_text"
+                android:textSize="@dimen/text_button"
+                android:focusable="true"
+                android:clickable="true"
+                android:nextFocusLeft="@id/btnOption3"
+                android:nextFocusRight="@id/btnOption1" />
+
+        </LinearLayout>
+
+        <!-- 反馈文字 -->
+        <TextView
+            android:id="@+id/tvFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/correct_green"
+            android:textSize="@dimen/text_body"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:visibility="gone" />
+
+        <!-- 进度 -->
+        <TextView
+            android:id="@+id/tvProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:layout_marginTop="@dimen/spacing_small" />
+
+        <!-- 家长解锁按钮 -->
+        <Button
+            android:id="@+id/btnParentUnlock"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/parent_unlock"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:background="@drawable/btn_settings_bg"
+            android:paddingHorizontal="@dimen/spacing_medium"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:focusable="true"
+            android:clickable="true" />
+
+    </LinearLayout>
+
+    <!-- ===================== PIN 输入界面 ===================== -->
+    <LinearLayout
+        android:id="@+id/layoutPin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/tv_margin_h"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_pin"
+            android:textColor="@color/accent"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginBottom="@dimen/spacing_medium" />
+
+        <!-- PIN 点 -->
+        <TextView
+            android:id="@+id/tvPinDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="○  ○  ○  ○"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_pin"
+            android:letterSpacing="0.3"
+            android:layout_marginBottom="@dimen/spacing_large" />
+
+        <!-- 数字键盘 3x4 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 1 2 3 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPin1"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="1"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin2"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="2"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin3"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="3"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+            </LinearLayout>
+
+            <!-- 4 5 6 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPin4"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="4"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin5"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="5"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin6"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="6"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+            </LinearLayout>
+
+            <!-- 7 8 9 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPin7"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="7"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin8"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="8"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin9"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="9"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+            </LinearLayout>
+
+            <!-- 清除 0 返回 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button android:id="@+id/btnPinClear"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="@string/pin_clear"
+                    android:textSize="@dimen/text_body"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPin0"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="0"
+                    android:textSize="@dimen/text_pin"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+                <Button android:id="@+id/btnPinBack"
+                    android:layout_width="@dimen/btn_min_width"
+                    android:layout_height="@dimen/btn_height"
+                    android:layout_margin="@dimen/btn_margin"
+                    android:text="@string/pin_back"
+                    android:textSize="@dimen/text_body"
+                    android:background="@drawable/btn_pin_bg"
+                    android:textColor="@color/btn_text"
+                    android:focusable="true"
+                    android:clickable="true" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

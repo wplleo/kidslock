@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 简单矢量图标（兼容 API 21-25） -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- 背景 -->
+    <path android:pathData="M0,0h48v48h-48z" android:fillColor="#1B263B" />
+
+    <!-- 锁体 -->
+    <path
+        android:pathData="M14,24 h20 v15 h-20 z"
+        android:fillColor="#E0E1DD" />
+
+    <!-- 锁环 -->
+    <path
+        android:pathData="M18,24 v-4 a6,6 0 0 1 12,0 v4"
+        android:strokeColor="#E0E1DD"
+        android:strokeWidth="2"
+        android:fillColor="#00000000" />
+
+    <!-- 锁孔 -->
+    <path
+        android:pathData="M22,29 a2,2 0 0 1 2,2 v3 h2 v-3 a2,2 0 1 0 -4,0 z"
+        android:fillColor="#1B263B" />
+</vector>
