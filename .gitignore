@@ -21,3 +21,6 @@ test_screens/
 
 # 调试版 APK（只发布正式版）
 kidslock-debug.apk
+
+# APK 发布版走 GitHub Releases，不入源码仓库
+*.apk
