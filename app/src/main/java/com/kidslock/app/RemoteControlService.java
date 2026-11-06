@@ -120,20 +120,20 @@ public class RemoteControlService extends Service {
         }
     }
 
-    private Notification buildNotification(String url) {
+    private Notification buildNotification(String message) {
         Intent open = new Intent(this, MainActivity.class);
         open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pi = PendingIntent.getActivity(this, 1, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        String text = url != null
-                ? "手机浏览器打开 " + url
-                : "正在启动手机控制…";
+        String text = message != null ? message : "正在启动手机控制…";
+        String big = text.startsWith("http://")
+                ? text + "\n需与电视连接同一个 WiFi"
+                : text;
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("手机控制已开启")
                 .setContentText(text)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(
-                        text + "\n需与电视连接同一个 WiFi"))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(big))
                 .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
                 .setOngoing(true)
                 .setContentIntent(pi)
@@ -142,11 +142,17 @@ public class RemoteControlService extends Service {
     }
 
     private void updateNotification() {
-        String url = (server != null && ip != null)
-                ? "http://" + ip + ":" + port
-                : "启动失败，请重启电视或稍后再试";
+        String text;
+        if (ip == null || ip.isEmpty()) {
+            // 电视没连 WiFi/网线：核心锁屏、计时完全不受影响，只是手机连不上
+            text = "电视未连接网络，手机控制暂不可用（锁屏功能正常）";
+        } else if (server == null) {
+            text = "手机控制服务启动失败，请重启电视（锁屏功能正常）";
+        } else {
+            text = "http://" + ip + ":" + port;
+        }
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm != null) nm.notify(NOTIFICATION_ID, buildNotification(url));
+        if (nm != null) nm.notify(NOTIFICATION_ID, buildNotification(text));
     }
 
     @Override

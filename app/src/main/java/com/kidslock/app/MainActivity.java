@@ -83,9 +83,19 @@ public class MainActivity extends AppCompatActivity {
         setupListeners();
         updateStatus();
 
-        // 首次安装（还没重启过电视）时，打开设置页也把手机控制服务拉起来
+        // 首次安装（还没重启过电视）时，打开设置页也把手机控制服务拉起来。
+        // 附加能力，失败不能影响设置页本身。
         if (pref.isRemoteControlEnabled()) {
+            tryStartRemoteControl();
+        }
+    }
+
+    private void tryStartRemoteControl() {
+        try {
             RemoteControlService.start(this);
+        } catch (Throwable t) {
+            Log.w("MainActivity", "Remote control service failed to start", t);
+            toast("手机控制启动失败，锁屏功能不受影响");
         }
     }
 
@@ -190,12 +200,17 @@ public class MainActivity extends AppCompatActivity {
         btnRemoteControl.setOnClickListener(v -> {
             boolean newVal = !pref.isRemoteControlEnabled();
             pref.setRemoteControlEnabled(newVal);
-            if (newVal) {
-                RemoteControlService.start(this);
-                toast("手机控制已开启");
-            } else {
-                RemoteControlService.stop(this);
-                toast("手机控制已关闭");
+            try {
+                if (newVal) {
+                    RemoteControlService.start(this);
+                    toast("手机控制已开启");
+                } else {
+                    RemoteControlService.stop(this);
+                    toast("手机控制已关闭");
+                }
+            } catch (Throwable t) {
+                Log.w("MainActivity", "Toggle remote control failed", t);
+                toast("操作失败，锁屏功能不受影响");
             }
             updateStatus();
         });

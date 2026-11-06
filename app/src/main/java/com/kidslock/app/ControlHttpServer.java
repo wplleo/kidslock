@@ -347,7 +347,7 @@ public class ControlHttpServer {
     private JSONObject pingJson() {
         JSONObject o = new JSONObject();
         try {
-            o.put("ok", true).put("app", "kidslock").put("version", "1.1.1")
+            o.put("ok", true).put("app", "kidslock").put("version", "1.1.2")
                     .put("ip", ip == null ? "" : ip).put("port", port);
         } catch (Exception ignored) {
         }

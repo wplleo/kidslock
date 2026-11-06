@@ -30,9 +30,14 @@ public class BootReceiver extends BroadcastReceiver {
 
         PrefManager pref = new PrefManager(context);
 
-        // 手机控制服务常驻：无论计时/锁屏处于什么状态，家长都能连上电视
-        if (pref.isRemoteControlEnabled()) {
-            RemoteControlService.start(context);
+        // 手机控制是附加能力，绝不能因为启动失败拖累核心锁屏逻辑。
+        // 部分厂商 ROM 会限制 BOOT_COMPLETED 里启动前台服务，用 try-catch 兜住。
+        try {
+            if (pref.isRemoteControlEnabled()) {
+                RemoteControlService.start(context);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "Remote control service failed to start, lock logic continues", t);
         }
 
         // 如果已经处于锁定状态，直接弹锁屏
