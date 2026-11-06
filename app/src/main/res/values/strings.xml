@@ -19,6 +19,8 @@
     <string name="section_config">参数配置</string>
     <string name="section_remote">手机控制</string>
     <string name="btn_copy_address">复制控制地址</string>
+    <string name="qr_desc">手机控制地址二维码</string>
+    <string name="qr_hint">手机扫上方二维码即可打开控制页\n在浏览器菜单选「添加到主屏幕」，下次从桌面一键打开</string>
     <string name="channel_remote_name">手机控制</string>
     <string name="channel_remote_desc">手机远程控制电视锁屏的服务状态</string>
     <string name="btn_start_timer">开始计时</string>

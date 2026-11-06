@@ -322,6 +322,27 @@
             android:focusable="true"
             android:clickable="true" />
 
+        <!-- 二维码：手机扫码直接打开控制页，不用手输网址 -->
+        <ImageView
+            android:id="@+id/ivQrCode"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/qr_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/qr_hint"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_body"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginTop="@dimen/spacing_small" />
+
         <!-- 说明文字 -->
         <TextView
             android:layout_width="wrap_content"

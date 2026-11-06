@@ -6,19 +6,33 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 设置主界面。
@@ -38,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRemoteControl;
     private TextView tvRemoteAddress;
     private Button btnCopyAddress;
+    private ImageView ivQrCode;
+    private String lastQrUrl;
 
     private final Runnable updateRunnable = new Runnable() {
         @Override
@@ -94,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         btnRemoteControl = findViewById(R.id.btnRemoteControl);
         tvRemoteAddress = findViewById(R.id.tvRemoteAddress);
         btnCopyAddress = findViewById(R.id.btnCopyAddress);
+        ivQrCode = findViewById(R.id.ivQrCode);
     }
 
     private void setupListeners() {
@@ -205,6 +222,51 @@ public class MainActivity extends AppCompatActivity {
         return "http://" + ip + ":" + pref.getRemotePort();
     }
 
+    /** 二维码只在地址变化时重画，避免每秒刷新状态重复生成位图。 */
+    private void updateQrCode(String url) {
+        if (url == null || url.isEmpty()) {
+            lastQrUrl = null;
+            ivQrCode.setImageBitmap(null);
+            ivQrCode.setVisibility(View.GONE);
+            return;
+        }
+        if (url.equals(lastQrUrl) && ivQrCode.getDrawable() != null) return;
+        lastQrUrl = url;
+        Bitmap qr = generateQrCode(url, 512);
+        if (qr != null) {
+            ivQrCode.setImageBitmap(qr);
+            ivQrCode.setVisibility(View.VISIBLE);
+        } else {
+            ivQrCode.setVisibility(View.GONE);
+        }
+    }
+
+    /** 用 ZXing 把控制地址编码成二维码位图（黑块 + 白底，纠错级别 M）。 */
+    private Bitmap generateQrCode(String content, int size) {
+        try {
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+            hints.put(EncodeHintType.MARGIN, 2);
+            BitMatrix matrix = new QRCodeWriter().encode(
+                    content, BarcodeFormat.QR_CODE, size, size, hints);
+            int w = matrix.getWidth();
+            int h = matrix.getHeight();
+            int[] pixels = new int[w * h];
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    pixels[y * w + x] = matrix.get(x, y) ? Color.BLACK : Color.WHITE;
+                }
+            }
+            Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+            bmp.setPixels(pixels, 0, w, 0, 0, w, h);
+            return bmp;
+        } catch (WriterException | IllegalArgumentException e) {
+            Log.e("MainActivity", "generate QR failed", e);
+            return null;
+        }
+    }
+
     private void showPinDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("设置家长PIN码（4位数字）");
@@ -256,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
                 ? "手机浏览器打开：" + url + "\n需与电视连接同一个 WiFi，用家长 PIN 登录（默认 1234）"
                 : "开启后，用同一 WiFi 下的手机浏览器访问控制地址");
         btnCopyAddress.setEnabled(url != null);
+        updateQrCode(url);
 
         // 状态
         if (pref.isLocked()) {

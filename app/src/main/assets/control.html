@@ -3,8 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#f5f7fb">
+<meta name="theme-color" content="#2563eb">
 <title>儿童锁屏 · 手机控制</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="儿童锁屏">
+<meta name="format-detection" content="telephone=no">
 <style>
   :root{
     --bg:#f5f7fb; --card:#ffffff; --line:#e6eaf0; --text:#1f2937;
@@ -65,6 +73,17 @@
   .pin-bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .pin-bar span{font-size:12px;color:var(--sub)}
   .pin-bar button{flex:0 0 auto;min-width:0;padding:7px 12px;font-size:12px}
+  .guide{background:var(--blue-soft);border:1px solid #dbeafe;border-radius:14px;
+    padding:16px;margin-bottom:14px}
+  .guide h2{font-size:14px;margin:0 0 8px;font-weight:600;color:var(--blue)}
+  .guide p{font-size:13px;line-height:1.8;color:#374151;margin:0 0 8px}
+  .guide .steps{font-size:13px;line-height:1.9;color:#374151;margin:0;padding-left:20px}
+  .guide .steps li{margin-bottom:2px}
+  .guide .mini{font-size:11px;color:var(--sub);margin-top:10px;line-height:1.6}
+  .guide button{margin-top:10px}
+  .pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;
+    border-radius:20px;background:#fff;color:var(--blue);border:1px solid #bfdbfe;
+    margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -151,6 +170,38 @@
     <div class="pin-bar">
       <span>已验证 · PIN 保存在本机</span>
       <button id="btnChangePin">更换 PIN</button>
+    </div>
+  </div>
+
+  <!-- 添加到手机桌面引导 -->
+  <div class="guide" id="guideCard">
+    <h2>把这个页面放到手机桌面</h2>
+    <p>以后不用记网址，桌面点一下图标就直接打开控制页。</p>
+    <div id="guideAndroid">
+      <span class="pill">安卓 · Chrome / Edge / 各品牌浏览器</span>
+      <ol class="steps">
+        <li>点浏览器右上角 <b>⋮</b> 菜单</li>
+        <li>选「添加到主屏幕」或「添加到桌面」/「安装应用」</li>
+        <li>确认名称「儿童锁屏」，点添加</li>
+      </ol>
+    </div>
+    <div id="guideIOS" class="hidden">
+      <span class="pill">iPhone · Safari</span>
+      <ol class="steps">
+        <li>点屏幕底部的 <b>分享</b> 按钮（方框带向上箭头）</li>
+        <li>向下滑，选「添加到主屏幕」</li>
+        <li>右上角点「添加」</li>
+      </ol>
+    </div>
+    <div id="guideWechat" class="hidden">
+      <span class="pill">微信里打开的话</span>
+      <p>微信内置浏览器不支持添加到桌面。点右上角 <b>···</b> →「在浏览器打开」，再按上面的步骤操作。</p>
+    </div>
+    <button class="primary hidden" id="btnInstall">一键安装到桌面</button>
+    <div class="mini">
+      局域网地址是 http，不是 https：iPhone 上添加后是全屏无地址栏（体验最像 App）；
+      安卓部分浏览器只会存成带图标的书签快捷方式，能一键打开但可能保留地址栏，属正常现象。<br>
+      电视 IP 变了（比如换路由器）需要重新扫码并重新添加一次。
     </div>
   </div>
 
@@ -355,6 +406,46 @@
   });
 
   buildChips();
+
+  // ---- 添加到桌面：平台检测 + PWA 安装事件 ----
+  (function(){
+    var ua = navigator.userAgent || '';
+    var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var isWechat = /MicroMessenger/i.test(ua);
+    if (isIOS) {
+      $('guideAndroid').classList.add('hidden');
+      $('guideIOS').classList.remove('hidden');
+    }
+    if (isWechat) {
+      $('guideWechat').classList.remove('hidden');
+    }
+
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault();
+      deferredPrompt = e;
+      $('btnInstall').classList.remove('hidden');
+    });
+    $('btnInstall').onclick = function(){
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){
+        deferredPrompt = null;
+        $('btnInstall').classList.add('hidden');
+      });
+    };
+    window.addEventListener('appinstalled', function(){
+      $('btnInstall').classList.add('hidden');
+      toast('已添加到桌面');
+    });
+
+    // 从桌面图标打开时（standalone），隐藏引导卡片，避免占空间
+    var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+      || window.navigator.standalone === true;
+    if (standalone) {
+      $('guideCard').classList.add('hidden');
+    }
+  })();
 
   // 启动：先探测连通性，再决定是否要 PIN 登录
   fetch('/api/ping', {cache:'no-store'}).then(function(r){ return r.json(); })

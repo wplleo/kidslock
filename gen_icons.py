@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 RES = r"C:/Users/Administrator/WorkBuddy/电视锁屏/app/src/main/res"
+ASSETS = r"C:/Users/Administrator/WorkBuddy/电视锁屏/app/src/main/assets"
 
 # 深蓝主题色
 BG_DARK = (13, 27, 42)      # #0D1B2A
@@ -41,13 +42,16 @@ def draw_lock(d, cx, cy, w, color=WHITE, bg=BG_ICON):
     d.ellipse([cx - key_r, body_y + int(body_h*0.3),
                cx + key_r, body_y + int(body_h*0.3) + key_r*2], fill=bg)
 
-def make_icon(size, path):
+def make_icon(size, path, lock_scale=1.0, square_bg=False):
     img = Image.new("RGBA", (size, size), BG_ICON + (255,))
     d = ImageDraw.Draw(img)
-    # 背景圆角
-    d.rounded_rectangle([0, 0, size, size], radius=max(2, size//6), fill=BG_ICON)
-    # 锁
-    draw_lock(d, size//2, size//2, size)
+    # 背景圆角（maskable 图标用纯方形背景，避免系统裁切后出现透明角）
+    if square_bg:
+        d.rectangle([0, 0, size, size], fill=BG_ICON)
+    else:
+        d.rounded_rectangle([0, 0, size, size], radius=max(2, size//6), fill=BG_ICON)
+    # 锁（maskable 需缩小到安全区内，避免被系统圆形裁切切掉）
+    draw_lock(d, size//2, size//2, int(size * lock_scale))
     img.save(path)
     print(f"  icon {size}x{size} -> {path}")
 
@@ -90,4 +94,14 @@ bdir = os.path.join(RES, "drawable-xhdpi")
 os.makedirs(bdir, exist_ok=True)
 make_banner(os.path.join(bdir, "tv_banner.png"))
 
-print("\n✅ 所有 PNG 生成完毕")
+# 3. 手机端 PWA 图标（放到桌面时用，assets 里由 HTTP 服务直接吐出）
+os.makedirs(ASSETS, exist_ok=True)
+make_icon(192, os.path.join(ASSETS, "icon-192.png"))
+make_icon(512, os.path.join(ASSETS, "icon-512.png"))
+# Android 自适应/maskable 图标：内容缩进到安全区，纯方形底
+make_icon(512, os.path.join(ASSETS, "icon-maskable-512.png"), lock_scale=0.62, square_bg=True)
+# iOS 添加到主屏幕（apple-touch-icon 不支持透明，会自动加圆角，用不透明方形底）
+make_icon(180, os.path.join(ASSETS, "apple-touch-icon.png"), square_bg=True)
+make_icon(64, os.path.join(ASSETS, "favicon.png"))
+
+print("\n✅ 所有 PNG 生成完毕（电视图标 + 手机 PWA 图标）")

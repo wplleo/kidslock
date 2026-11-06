@@ -41,4 +41,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.material:material:1.11.0'
+    // 电视设置页生成控制地址二维码（手机扫码直接打开控制页）
+    implementation 'com.google.zxing:core:3.5.3'
 }

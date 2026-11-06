@@ -47,6 +47,19 @@ public class ControlHttpServer {
 
     private static final String TAG = "ControlHttpServer";
 
+    /** 手机控制页的静态资源：路径 -> [assets 文件名, Content-Type]。免 PIN。 */
+    private static final Map<String, String[]> STATIC_ASSETS = new HashMap<>();
+    static {
+        STATIC_ASSETS.put("/manifest.webmanifest", new String[]{"manifest.webmanifest", "application/manifest+json; charset=utf-8"});
+        STATIC_ASSETS.put("/icon-192.png", new String[]{"icon-192.png", "image/png"});
+        STATIC_ASSETS.put("/icon-512.png", new String[]{"icon-512.png", "image/png"});
+        STATIC_ASSETS.put("/icon-maskable-512.png", new String[]{"icon-maskable-512.png", "image/png"});
+        STATIC_ASSETS.put("/apple-touch-icon.png", new String[]{"apple-touch-icon.png", "image/png"});
+        STATIC_ASSETS.put("/apple-touch-icon-precomposed.png", new String[]{"apple-touch-icon.png", "image/png"});
+        STATIC_ASSETS.put("/favicon.png", new String[]{"favicon.png", "image/png"});
+        STATIC_ASSETS.put("/favicon.ico", new String[]{"favicon.png", "image/png"});
+    }
+
     private final Context context;
     private final PrefManager pref;
     private final int port;
@@ -151,6 +164,16 @@ public class ControlHttpServer {
         }
         if ("/api/ping".equals(path)) {
             return json(pingJson());
+        }
+
+        // 静态资源（PWA manifest / 图标），浏览器拉取时不带 PIN
+        String[] asset = STATIC_ASSETS.get(path);
+        if (asset != null) {
+            byte[] bytes = loadAssetBytes(asset[0]);
+            if (bytes != null) {
+                return new Response(asset[1], bytes);
+            }
+            return json(errorJson("NOT_FOUND", "资源不存在"));
         }
 
         // 以下接口都需要 PIN
@@ -410,16 +433,32 @@ public class ControlHttpServer {
         }
     }
 
-    private synchronized String loadControlPage() {
-        if (controlPageHtml != null) return controlPageHtml;
-        try (InputStream is = context.getAssets().open("control.html")) {
+    private final Map<String, byte[]> assetCache = new HashMap<>();
+
+    /** 读取 assets 下的静态文件（二进制安全），带内存缓存。 */
+    private synchronized byte[] loadAssetBytes(String name) {
+        if (assetCache.containsKey(name)) return assetCache.get(name);
+        try (InputStream is = context.getAssets().open(name)) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             byte[] buf = new byte[4096];
             int n;
             while ((n = is.read(buf)) != -1) bos.write(buf, 0, n);
-            controlPageHtml = new String(bos.toByteArray(), StandardCharsets.UTF_8);
+            byte[] bytes = bos.toByteArray();
+            assetCache.put(name, bytes);
+            return bytes;
         } catch (IOException e) {
-            Log.e(TAG, "load control.html failed", e);
+            Log.w(TAG, "asset not found: " + name);
+            return null;
+        }
+    }
+
+    private synchronized String loadControlPage() {
+        if (controlPageHtml != null) return controlPageHtml;
+        byte[] bytes = loadAssetBytes("control.html");
+        if (bytes != null) {
+            controlPageHtml = new String(bytes, StandardCharsets.UTF_8);
+        } else {
+            Log.e(TAG, "load control.html failed");
             controlPageHtml = "<html><body><h2>控制页加载失败</h2></body></html>";
         }
         return controlPageHtml;
