@@ -277,6 +277,51 @@
             android:focusable="true"
             android:clickable="true" />
 
+        <!-- ===== 手机控制 ===== -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/section_remote"
+            android:textColor="@color/highlight"
+            android:textSize="@dimen/text_subtitle"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <Button
+            android:id="@+id/btnRemoteControl"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:minWidth="360dp"
+            android:textSize="@dimen/text_button"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/tvRemoteAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_body"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:textIsSelectable="true"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <Button
+            android:id="@+id/btnCopyAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:minWidth="240dp"
+            android:text="@string/btn_copy_address"
+            android:textSize="@dimen/text_body"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
+
         <!-- 说明文字 -->
         <TextView
             android:layout_width="wrap_content"

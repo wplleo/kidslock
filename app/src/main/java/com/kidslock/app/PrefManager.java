@@ -24,12 +24,16 @@ public class PrefManager {
     private static final String KEY_PARENT_PIN = "parent_pin";
     private static final String KEY_PIN_FAIL_COUNT = "pin_fail_count";
     private static final String KEY_PIN_LOCK_UNTIL = "pin_lock_until";
+    private static final String KEY_REMOTE_ENABLED = "remote_enabled";
+    private static final String KEY_REMOTE_PORT = "remote_port";
 
     // Defaults
     private static final boolean DEFAULT_AUTO_START = true;
     private static final int DEFAULT_WATCH_LIMIT_MIN = 30;
     private static final int DEFAULT_UNLOCK_COUNT = 3;
     private static final String DEFAULT_PARENT_PIN = "1234";
+    private static final boolean DEFAULT_REMOTE_ENABLED = true;
+    private static final int DEFAULT_REMOTE_PORT = 8080;
     private static final int MAX_PIN_FAILS = 5;
     private static final long PIN_LOCKOUT_MS = 30_000;
 
@@ -129,6 +133,23 @@ public class PrefManager {
 
     public void resetPinFailures() {
         prefs.edit().putInt(KEY_PIN_FAIL_COUNT, 0).putLong(KEY_PIN_LOCK_UNTIL, 0).apply();
+    }
+
+    // --- 手机远程控制 ---
+    public boolean isRemoteControlEnabled() {
+        return prefs.getBoolean(KEY_REMOTE_ENABLED, DEFAULT_REMOTE_ENABLED);
+    }
+
+    public void setRemoteControlEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_REMOTE_ENABLED, enabled).apply();
+    }
+
+    public int getRemotePort() {
+        return prefs.getInt(KEY_REMOTE_PORT, DEFAULT_REMOTE_PORT);
+    }
+
+    public void setRemotePort(int port) {
+        prefs.edit().putInt(KEY_REMOTE_PORT, port).apply();
     }
 
     // --- Helper: start timer ---

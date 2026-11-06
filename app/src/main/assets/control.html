@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f5f7fb">
+<title>儿童锁屏 · 手机控制</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --line:#e6eaf0; --text:#1f2937;
+    --sub:#6b7280; --blue:#2563eb; --blue-soft:#eff5ff;
+    --red:#dc2626; --red-soft:#fef2f2; --green:#16a34a; --green-soft:#f0fdf4;
+    --amber:#d97706; --amber-soft:#fffbeb; --shadow:0 2px 10px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    padding:16px 14px 40px;max-width:560px;margin:0 auto}
+  h1{font-size:19px;margin:0 0 2px;font-weight:700}
+  .sub{font-size:12px;color:var(--sub)}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .conn{font-size:11px;padding:4px 9px;border-radius:20px;background:var(--green-soft);
+    color:var(--green);border:1px solid #bbf7d0;white-space:nowrap}
+  .conn.off{background:var(--red-soft);color:var(--red);border-color:#fecaca}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .card h2{font-size:14px;margin:0 0 12px;font-weight:600;color:var(--sub);
+    letter-spacing:.3px}
+  .status-main{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .badge{font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px}
+  .badge.locked{background:var(--red-soft);color:var(--red)}
+  .badge.running{background:var(--green-soft);color:var(--green)}
+  .badge.idle{background:#f3f4f6;color:var(--sub)}
+  .remaining{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px}
+  .meta{display:flex;gap:16px;font-size:12px;color:var(--sub);margin-top:10px;flex-wrap:wrap}
+  .meta b{color:var(--text);font-weight:600}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  button{font-family:inherit;font-size:14px;font-weight:600;border-radius:10px;
+    border:1px solid var(--line);background:#fff;color:var(--text);
+    padding:11px 14px;cursor:pointer;flex:1;min-width:88px;transition:.15s;
+    -webkit-appearance:none}
+  button:active{transform:scale(.97)}
+  button:disabled{opacity:.5;cursor:default}
+  button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  button.danger{background:var(--red-soft);border-color:#fecaca;color:var(--red)}
+  button.safe{background:var(--green-soft);border-color:#bbf7d0;color:var(--green)}
+  button.chip{flex:0 0 auto;min-width:0;padding:9px 13px;font-size:13px}
+  button.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+  .sep{height:1px;background:var(--line);margin:14px 0}
+  label{display:block;font-size:12px;color:var(--sub);margin:0 0 6px}
+  input{width:100%;font-size:16px;padding:11px 12px;border:1px solid var(--line);
+    border-radius:10px;background:#fff;color:var(--text);outline:none;font-family:inherit}
+  input:focus{border-color:var(--blue)}
+  .field{display:flex;gap:8px;align-items:center}
+  .field input{flex:1}
+  .field button{flex:0 0 auto;min-width:0;padding:11px 16px}
+  .tip{font-size:12px;color:var(--sub);line-height:1.7;margin-top:8px}
+  .tip code{background:#eef2f7;padding:1px 5px;border-radius:4px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#374151}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,12px);
+    background:#111827;color:#fff;padding:11px 18px;border-radius:22px;font-size:13px;
+    opacity:0;transition:.25s;pointer-events:none;max-width:88%;text-align:center;z-index:9}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .hidden{display:none !important}
+  .pin-bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pin-bar span{font-size:12px;color:var(--sub)}
+  .pin-bar button{flex:0 0 auto;min-width:0;padding:7px 12px;font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>儿童锁屏 · 手机控制</h1>
+    <div class="sub" id="addr">正在连接电视…</div>
+  </div>
+  <div class="conn" id="conn">连接中</div>
+</header>
+
+<!-- PIN 登录 -->
+<div class="card" id="loginCard">
+  <h2>家长验证</h2>
+  <label for="pinInput">输入家长 PIN 码（默认 1234）</label>
+  <div class="field">
+    <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*"
+           maxlength="4" placeholder="4 位数字" autocomplete="off">
+    <button class="primary" id="btnLogin">连接</button>
+  </div>
+  <div class="tip">手机需与电视连接同一个 WiFi。PIN 只保存在本机浏览器，不会上传。</div>
+</div>
+
+<div id="mainArea" class="hidden">
+
+  <!-- 状态 -->
+  <div class="card">
+    <h2>当前状态</h2>
+    <div class="status-main">
+      <span class="badge idle" id="badge">读取中</span>
+      <span class="remaining" id="remaining">--:--</span>
+    </div>
+    <div class="meta">
+      <span>每日时长 <b id="mWatch">--</b></span>
+      <span>解锁题数 <b id="mCount">--</b></span>
+      <span>开机自启 <b id="mAuto">--</b></span>
+    </div>
+  </div>
+
+  <!-- 快捷操作 -->
+  <div class="card">
+    <h2>快捷操作</h2>
+    <div class="row">
+      <button class="danger" data-api="lock">立即锁屏</button>
+      <button class="safe" data-api="unlock">立即解锁</button>
+      <button data-api="stoptimer">停止计时</button>
+    </div>
+    <div class="tip">锁屏后孩子需连续答对五年级汉字才能解锁，或在手机上点「立即解锁」。</div>
+  </div>
+
+  <!-- 观看时长 -->
+  <div class="card">
+    <h2>观看时长（点击即开始计时）</h2>
+    <div class="row" id="timeRow"></div>
+    <div class="sep"></div>
+    <h2>临时加时</h2>
+    <div class="row" id="addRow"></div>
+    <div class="tip">已锁屏时加时会自动解锁，并按加时时长重新计时。</div>
+  </div>
+
+  <!-- 参数配置 -->
+  <div class="card">
+    <h2>解锁题数</h2>
+    <div class="row" id="countRow"></div>
+    <div class="sep"></div>
+    <h2>开机自启</h2>
+    <div class="row">
+      <button class="chip" data-auto="1">开启</button>
+      <button class="chip" data-auto="0">关闭</button>
+    </div>
+    <div class="sep"></div>
+    <h2>修改家长 PIN</h2>
+    <div class="field">
+      <input id="newPin" type="password" inputmode="numeric" maxlength="4"
+             placeholder="新的 4 位数字" autocomplete="off">
+      <button class="primary" id="btnSavePin">保存</button>
+    </div>
+    <div class="tip">改完后本机会自动用新 PIN 连接。</div>
+  </div>
+
+  <!-- 账号 -->
+  <div class="card">
+    <div class="pin-bar">
+      <span>已验证 · PIN 保存在本机</span>
+      <button id="btnChangePin">更换 PIN</button>
+    </div>
+  </div>
+
+  <div class="tip" style="text-align:center;margin-top:18px">
+    电视地址 <code id="addr2">—</code><br>把这个地址存成书签，下次一键打开
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  var PIN_KEY = 'kidslock_pin';
+  var pin = localStorage.getItem(PIN_KEY) || '';
+  var $ = function(id){ return document.getElementById(id); };
+  var state = {};
+  var timer = null;
+  var toastTimer = null;
+
+  function toast(msg){
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  function setConn(ok, text){
+    var c = $('conn');
+    c.textContent = text || (ok ? '已连接' : '未连接');
+    c.className = 'conn' + (ok ? '' : ' off');
+  }
+
+  function qs(params){
+    var s = 'pin=' + encodeURIComponent(pin);
+    for (var k in params){
+      if (params[k] !== undefined && params[k] !== null && params[k] !== ''){
+        s += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+      }
+    }
+    return s;
+  }
+
+  function call(path, params, method){
+    return fetch(path + '?' + qs(params || {}), { method: method || 'POST', cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .catch(function(){ return {ok:false, code:'NETWORK', msg:'连不上电视，检查 WiFi'}; });
+  }
+
+  function handlePinError(d){
+    if (d.code === 'PIN_WRONG' || d.code === 'PIN_LOCKED'){
+      if (d.code === 'PIN_WRONG'){
+        localStorage.removeItem(PIN_KEY);
+        pin = '';
+        showLogin();
+      }
+      toast(d.msg);
+      return true;
+    }
+    return false;
+  }
+
+  function act(path, params, okMsg, after){
+    call(path, params).then(function(d){
+      if (handlePinError(d)) return;
+      toast(d.ok ? (okMsg || d.msg) : d.msg);
+      if (after) after(d);
+      refresh();
+    });
+  }
+
+  function fmt(sec){
+    sec = Math.max(0, sec|0);
+    var m = Math.floor(sec/60), s = sec%60;
+    return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  }
+
+  function render(d){
+    state = d;
+    var badge = $('badge');
+    if (d.locked){
+      badge.className = 'badge locked'; badge.textContent = '已锁屏';
+    } else if (d.timerActive && d.remainingSec > 0){
+      badge.className = 'badge running'; badge.textContent = '计时中';
+    } else {
+      badge.className = 'badge idle'; badge.textContent = '未计时';
+    }
+    $('remaining').textContent = d.timerActive ? fmt(d.remainingSec) : '--:--';
+    $('mWatch').textContent  = d.watchLimitMin + ' 分钟';
+    $('mCount').textContent  = d.unlockCount + ' 题';
+    $('mAuto').textContent   = d.autoStart ? '已开启' : '已关闭';
+    $('addr').textContent = '电视 ' + d.ip + ':' + d.port;
+    $('addr2').textContent = location.origin;
+
+    // 选中态
+    [].forEach.call(document.querySelectorAll('#timeRow button'), function(b){
+      b.classList.toggle('on', +b.dataset.minutes === d.watchLimitMin);
+    });
+    [].forEach.call(document.querySelectorAll('#countRow button'), function(b){
+      b.classList.toggle('on', +b.dataset.count === d.unlockCount);
+    });
+    [].forEach.call(document.querySelectorAll('[data-auto]'), function(b){
+      b.classList.toggle('on', (b.dataset.auto === '1') === !!d.autoStart);
+    });
+  }
+
+  function refresh(){
+    if (!pin) return;
+    call('/api/status', {}, 'GET').then(function(d){
+      if (!d.ok){ handlePinError(d); setConn(false, '验证失败'); return; }
+      setConn(true, '已连接');
+      render(d);
+    });
+  }
+
+  function showLogin(){
+    $('loginCard').classList.remove('hidden');
+    $('mainArea').classList.add('hidden');
+    $('pinInput').value = '';
+    clearInterval(timer); timer = null;
+    setConn(false, '待验证');
+  }
+
+  function showMain(){
+    $('loginCard').classList.add('hidden');
+    $('mainArea').classList.remove('hidden');
+    refresh();
+    clearInterval(timer);
+    timer = setInterval(refresh, 3000);
+  }
+
+  function tryLogin(){
+    var v = $('pinInput').value.trim();
+    if (!/^\d{4}$/.test(v)){ toast('请输入 4 位数字 PIN'); return; }
+    pin = v;
+    call('/api/status', {}, 'GET').then(function(d){
+      if (!d.ok){
+        pin = ''; localStorage.removeItem(PIN_KEY);
+        toast(d.msg); return;
+      }
+      localStorage.setItem(PIN_KEY, v);
+      showMain();
+      toast('已连接电视');
+    });
+  }
+
+  // 构建按钮组
+  function buildChips(){
+    var times = [15,30,45,60,90,120];
+    times.forEach(function(m){
+      var b = document.createElement('button');
+      b.className = 'chip'; b.textContent = m + '分'; b.dataset.minutes = m;
+      b.onclick = function(){ act('/api/timer', {minutes:m}, '已设为 ' + m + ' 分钟'); };
+      $('timeRow').appendChild(b);
+    });
+    [5,10,30].forEach(function(m){
+      var b = document.createElement('button');
+      b.className = 'chip'; b.textContent = '+' + m + '分';
+      b.onclick = function(){ act('/api/addtime', {minutes:m}, '已加时 ' + m + ' 分钟'); };
+      $('addRow').appendChild(b);
+    });
+    [3,5,10].forEach(function(c){
+      var b = document.createElement('button');
+      b.className = 'chip'; b.textContent = c + '题'; b.dataset.count = c;
+      b.onclick = function(){ act('/api/settings', {unlock_count:c}, '解锁题数已设为 ' + c + ' 题'); };
+      $('countRow').appendChild(b);
+    });
+  }
+
+  // 事件绑定
+  $('btnLogin').onclick = tryLogin;
+  $('pinInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') tryLogin();
+  });
+  $('btnChangePin').onclick = function(){
+    localStorage.removeItem(PIN_KEY); pin = ''; showLogin();
+    toast('请输入新的 PIN');
+  };
+  $('btnSavePin').onclick = function(){
+    var v = $('newPin').value.trim();
+    if (!/^\d{4}$/.test(v)){ toast('PIN 必须是 4 位数字'); return; }
+    call('/api/settings', {newpin:v}).then(function(d){
+      if (handlePinError(d)) return;
+      if (d.ok){
+        pin = v;
+        localStorage.setItem(PIN_KEY, v);
+        $('newPin').value = '';
+      }
+      toast(d.msg);
+      refresh();
+    });
+  };
+  [].forEach.call(document.querySelectorAll('[data-api]'), function(b){
+    b.onclick = function(){ act('/api/' + b.dataset.api, {}); };
+  });
+  [].forEach.call(document.querySelectorAll('[data-auto]'), function(b){
+    b.onclick = function(){
+      act('/api/settings', {autostart:b.dataset.auto},
+          b.dataset.auto === '1' ? '已开启开机自启' : '已关闭开机自启');
+    };
+  });
+
+  buildChips();
+
+  // 启动：先探测连通性，再决定是否要 PIN 登录
+  fetch('/api/ping', {cache:'no-store'}).then(function(r){ return r.json(); })
+    .then(function(d){
+      $('addr').textContent = '电视 ' + (d.ip || '') + ':' + (d.port || '');
+      $('addr2').textContent = location.origin;
+      if (pin) showMain(); else showLogin();
+    })
+    .catch(function(){
+      setConn(false, '连不上电视');
+      $('addr').textContent = '无法连接电视服务';
+      showLogin();
+    });
+})();
+</script>
+</body>
+</html>

@@ -67,6 +67,12 @@ public class LockService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(NOTIFICATION_ID, buildNotification());
 
+        // 手机控制 / 锁屏界面发起的解锁请求
+        if (intent != null && "com.kidslock.app.ACTION_UNLOCK".equals(intent.getAction())) {
+            unlockAndStop();
+            return START_NOT_STICKY;
+        }
+
         // 已锁屏 → 进入锁屏守护模式
         if (pref.isLocked()) {
             Log.i(TAG, "Device locked, starting lock watchdog");
@@ -89,6 +95,14 @@ public class LockService extends Service {
             triggerLock();
             return START_STICKY;
         }
+
+        // 从锁屏/守护模式切回计时模式时，先撤掉看门狗和悬浮窗，
+        // 否则 watchdog 会在下一拍检测到「未锁定」而把服务直接停掉。
+        if (watchdogRunnable != null) {
+            handler.removeCallbacks(watchdogRunnable);
+            watchdogRunnable = null;
+        }
+        hideOverlay();
 
         // 开始计时循环
         startTicking();
@@ -259,19 +273,34 @@ public class LockService extends Service {
     }
 
     /**
-     * 解锁时由 LockScreenActivity 调用，彻底移除悬浮窗和停止服务。
+     * 解锁时由 LockScreenActivity / ControlHttpServer 调用，彻底移除悬浮窗并停止服务。
      */
     public static void requestUnlock(Context context) {
         Intent intent = new Intent(context, LockService.class);
         intent.setAction("com.kidslock.app.ACTION_UNLOCK");
-        context.startService(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
+        }
     }
 
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        if (intent != null && "com.kidslock.app.ACTION_UNLOCK".equals(intent.getAction())) {
-            unlockAndStop();
+    /**
+     * 手机端「立即锁屏」调用：先落盘锁屏状态，再让服务切换成守护模式。
+     * 不在这里直接 startActivity —— Android 10+ 限制后台启动 Activity，
+     * 由服务的悬浮窗覆盖层兜底。
+     */
+    public static void requestLock(Context context) {
+        PrefManager p = new PrefManager(context);
+        p.setLocked(true);
+        p.setHomeAliasEnabled(context, true);
+        p.stopTimer();
+        Intent intent = new Intent(context, LockService.class);
+        intent.setAction("com.kidslock.app.ACTION_LOCK_NOW");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent);
+        } else {
+            context.startService(intent);
         }
     }
 

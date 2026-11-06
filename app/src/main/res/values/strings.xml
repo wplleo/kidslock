@@ -17,6 +17,10 @@
     <string name="settings_title">儿童锁屏设置</string>
     <string name="section_timer">计时控制</string>
     <string name="section_config">参数配置</string>
+    <string name="section_remote">手机控制</string>
+    <string name="btn_copy_address">复制控制地址</string>
+    <string name="channel_remote_name">手机控制</string>
+    <string name="channel_remote_desc">手机远程控制电视锁屏的服务状态</string>
     <string name="btn_start_timer">开始计时</string>
     <string name="btn_stop_timer">停止计时</string>
     <string name="btn_lock_now">立即锁屏</string>

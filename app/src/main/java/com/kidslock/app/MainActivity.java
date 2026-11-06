@@ -1,6 +1,9 @@
 package com.kidslock.app;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAutoStart;
     private TextView tvWatchTime;
     private TextView tvUnlockCount;
+    private Button btnRemoteControl;
+    private TextView tvRemoteAddress;
+    private Button btnCopyAddress;
 
     private final Runnable updateRunnable = new Runnable() {
         @Override
@@ -60,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupListeners();
         updateStatus();
+
+        // 首次安装（还没重启过电视）时，打开设置页也把手机控制服务拉起来
+        if (pref.isRemoteControlEnabled()) {
+            RemoteControlService.start(this);
+        }
     }
 
     @Override
@@ -80,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
         btnAutoStart = findViewById(R.id.btnAutoStart);
         tvWatchTime = findViewById(R.id.tvWatchTime);
         tvUnlockCount = findViewById(R.id.tvUnlockCount);
+        btnRemoteControl = findViewById(R.id.btnRemoteControl);
+        tvRemoteAddress = findViewById(R.id.tvRemoteAddress);
+        btnCopyAddress = findViewById(R.id.btnCopyAddress);
     }
 
     private void setupListeners() {
@@ -154,6 +168,41 @@ public class MainActivity extends AppCompatActivity {
             toast("已解锁");
             updateStatus();
         });
+
+        // 手机控制开关
+        btnRemoteControl.setOnClickListener(v -> {
+            boolean newVal = !pref.isRemoteControlEnabled();
+            pref.setRemoteControlEnabled(newVal);
+            if (newVal) {
+                RemoteControlService.start(this);
+                toast("手机控制已开启");
+            } else {
+                RemoteControlService.stop(this);
+                toast("手机控制已关闭");
+            }
+            updateStatus();
+        });
+
+        // 复制控制地址（方便发到手机上）
+        btnCopyAddress.setOnClickListener(v -> {
+            String url = getControlUrl();
+            if (url == null) {
+                toast("未获取到电视 IP，请检查网络连接");
+                return;
+            }
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            if (cm != null) {
+                cm.setPrimaryClip(ClipData.newPlainText("控制地址", url));
+                toast("地址已复制：" + url);
+            }
+        });
+    }
+
+    /** 拼出手机浏览器要访问的地址。 */
+    private String getControlUrl() {
+        String ip = ControlHttpServer.getLocalIpAddress();
+        if (ip == null || ip.isEmpty()) return null;
+        return "http://" + ip + ":" + pref.getRemotePort();
     }
 
     private void showPinDialog() {
@@ -198,6 +247,15 @@ public class MainActivity extends AppCompatActivity {
 
         // 解锁题数
         tvUnlockCount.setText("解锁题数：" + pref.getUnlockCount() + " 道连续答对");
+
+        // 手机控制
+        boolean remoteOn = pref.isRemoteControlEnabled();
+        btnRemoteControl.setText(remoteOn ? "手机控制：已开启（点击关闭）" : "手机控制：已关闭（点击开启）");
+        String url = remoteOn ? getControlUrl() : null;
+        tvRemoteAddress.setText(url != null
+                ? "手机浏览器打开：" + url + "\n需与电视连接同一个 WiFi，用家长 PIN 登录（默认 1234）"
+                : "开启后，用同一 WiFi 下的手机浏览器访问控制地址");
+        btnCopyAddress.setEnabled(url != null);
 
         // 状态
         if (pref.isLocked()) {

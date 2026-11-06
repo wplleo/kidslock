@@ -30,6 +30,11 @@ public class BootReceiver extends BroadcastReceiver {
 
         PrefManager pref = new PrefManager(context);
 
+        // 手机控制服务常驻：无论计时/锁屏处于什么状态，家长都能连上电视
+        if (pref.isRemoteControlEnabled()) {
+            RemoteControlService.start(context);
+        }
+
         // 如果已经处于锁定状态，直接弹锁屏
         if (pref.isLocked()) {
             Log.i(TAG, "Device was locked, showing lock screen");
