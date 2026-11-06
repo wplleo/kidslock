@@ -140,7 +140,7 @@ adb install kidslock-release.apk
 - 编译版本：API 34
 - 签名密钥有效期：10000天
 - 架构：armeabi-v7a / arm64-v8a（覆盖所有小米电视）
-- 当前版本：v1.1（versionCode 2）
+- 当前版本：v1.1.1（versionCode 3）
 
 ## 编译方法
 
