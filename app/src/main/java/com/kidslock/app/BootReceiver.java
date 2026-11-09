@@ -40,6 +40,16 @@ public class BootReceiver extends BroadcastReceiver {
             Log.w(TAG, "Remote control service failed to start, lock logic continues", t);
         }
 
+        // 亮屏自动计时也是附加能力：部分 ROM 限制 BOOT_COMPLETED 里起前台服务，
+        // 起不来不能影响下面的核心锁屏/计时逻辑。
+        try {
+            if (pref.isScreenOnStart()) {
+                ScreenOnService.start(context);
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "Screen-on service failed to start, lock logic continues", t);
+        }
+
         // 如果已经处于锁定状态，直接弹锁屏
         if (pref.isLocked()) {
             Log.i(TAG, "Device was locked, showing lock screen");
@@ -74,9 +84,9 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        // 开机自启 → 启动计时
-        if (pref.isAutoStart()) {
-            Log.i(TAG, "Auto start enabled, starting timer");
+        // 开机自启，或开了「亮屏自动计时」（开机本身就是一次亮屏）→ 开始计时
+        if (pref.isAutoStart() || pref.isScreenOnStart()) {
+            Log.i(TAG, "Auto start / screen-on-start enabled, starting timer");
             int minutes = pref.getWatchLimitMinutes();
             pref.startTimer(minutes);
             startLockService(context);

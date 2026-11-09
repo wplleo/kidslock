@@ -121,6 +121,7 @@
       <span>每日时长 <b id="mWatch">--</b></span>
       <span>解锁题数 <b id="mCount">--</b></span>
       <span>开机自启 <b id="mAuto">--</b></span>
+      <span>亮屏自动计时 <b id="mScreenOn">--</b></span>
     </div>
   </div>
 
@@ -155,6 +156,13 @@
       <button class="chip" data-auto="1">开启</button>
       <button class="chip" data-auto="0">关闭</button>
     </div>
+    <div class="sep"></div>
+    <h2>亮屏自动开始倒计时</h2>
+    <div class="row">
+      <button class="chip" data-screenon="1">开启</button>
+      <button class="chip" data-screenon="0">关闭</button>
+    </div>
+    <div class="tip">开启后，电视开机或息屏再亮屏会自动开始新一轮倒计时。计时中亮屏不重置，锁屏中亮屏不解锁，孩子按电源键无法续时间。</div>
     <div class="sep"></div>
     <h2>修改家长 PIN</h2>
     <div class="field">
@@ -294,6 +302,7 @@
     $('mWatch').textContent  = d.watchLimitMin + ' 分钟';
     $('mCount').textContent  = d.unlockCount + ' 题';
     $('mAuto').textContent   = d.autoStart ? '已开启' : '已关闭';
+    $('mScreenOn').textContent = d.screenOnStart ? '已开启' : '已关闭';
     $('addr').textContent = '电视 ' + d.ip + ':' + d.port;
     $('addr2').textContent = location.origin;
 
@@ -306,6 +315,9 @@
     });
     [].forEach.call(document.querySelectorAll('[data-auto]'), function(b){
       b.classList.toggle('on', (b.dataset.auto === '1') === !!d.autoStart);
+    });
+    [].forEach.call(document.querySelectorAll('[data-screenon]'), function(b){
+      b.classList.toggle('on', (b.dataset.screenon === '1') === !!d.screenOnStart);
     });
   }
 
@@ -402,6 +414,12 @@
     b.onclick = function(){
       act('/api/settings', {autostart:b.dataset.auto},
           b.dataset.auto === '1' ? '已开启开机自启' : '已关闭开机自启');
+    };
+  });
+  [].forEach.call(document.querySelectorAll('[data-screenon]'), function(b){
+    b.onclick = function(){
+      act('/api/settings', {screen_on_start:b.dataset.screenon},
+          b.dataset.screenon === '1' ? '已开启亮屏自动计时' : '已关闭亮屏自动计时');
     };
   });
 

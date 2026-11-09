@@ -292,6 +292,23 @@ public class ControlHttpServer {
             pref.setAutoStart(v);
             changed.append("开机自启=").append(v ? "开" : "关").append(" ");
         }
+        String screenOn = q.get("screen_on_start");
+        if (screenOn != null && !screenOn.isEmpty()) {
+            boolean v = "1".equals(screenOn) || "true".equalsIgnoreCase(screenOn);
+            pref.setScreenOnStart(v);
+            try {
+                if (v) {
+                    ScreenOnService.start(context);
+                    ScreenOnService.trigger(context, "phone_setting_on");
+                } else {
+                    ScreenOnService.stop(context);
+                }
+            } catch (Throwable t) {
+                // 设置已经写入本地，服务起不来不影响核心锁屏和下次开机恢复
+                Log.w(TAG, "screen-on service toggle failed", t);
+            }
+            changed.append("亮屏自动计时=").append(v ? "开" : "关").append(" ");
+        }
         String newPin = q.get("newpin");
         if (newPin != null && !newPin.isEmpty()) {
             if (!newPin.matches("\\d{4}")) return errorJson("BAD_PARAM", "PIN 必须是 4 位数字");
@@ -347,7 +364,7 @@ public class ControlHttpServer {
     private JSONObject pingJson() {
         JSONObject o = new JSONObject();
         try {
-            o.put("ok", true).put("app", "kidslock").put("version", "1.1.2")
+            o.put("ok", true).put("app", "kidslock").put("version", "1.2.0")
                     .put("ip", ip == null ? "" : ip).put("port", port);
         } catch (Exception ignored) {
         }
@@ -365,6 +382,7 @@ public class ControlHttpServer {
                     .put("watchLimitMin", pref.getWatchLimitMinutes())
                     .put("unlockCount", pref.getUnlockCount())
                     .put("autoStart", pref.isAutoStart())
+                    .put("screenOnStart", pref.isScreenOnStart())
                     .put("remoteEnabled", pref.isRemoteControlEnabled())
                     .put("pinLocked", pref.isPinLocked())
                     .put("pinLockRemainingSec", pref.getPinLockRemainingMillis() / 1000)

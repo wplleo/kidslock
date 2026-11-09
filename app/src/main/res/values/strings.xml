@@ -17,10 +17,13 @@
     <string name="settings_title">儿童锁屏设置</string>
     <string name="section_timer">计时控制</string>
     <string name="section_config">参数配置</string>
-    <string name="section_remote">手机控制</string>
+    <string name="section_remote">手机扫码控制</string>
+    <string name="section_remote_hint">用手机扫码即可在同一 WiFi 下控制电视\n不用手输网址，也能把控制页添加到手机桌面</string>
+    <string name="btn_go_remote">手机扫码控制 → 点此查看二维码</string>
     <string name="btn_copy_address">复制控制地址</string>
-    <string name="qr_desc">手机控制地址二维码</string>
+    <string name="qr_desc">手机扫码控制地址二维码</string>
     <string name="qr_hint">手机扫上方二维码即可打开控制页\n在浏览器菜单选「添加到主屏幕」，下次从桌面一键打开</string>
+    <string name="hint_screen_on_start">开启后：开机或息屏再亮屏，自动开始新一轮倒计时\n计时中亮屏不会重置，锁屏中亮屏不会解锁</string>
     <string name="channel_remote_name">手机控制</string>
     <string name="channel_remote_desc">手机远程控制电视锁屏的服务状态</string>
     <string name="btn_start_timer">开始计时</string>

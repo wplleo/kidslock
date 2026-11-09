@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvStatus;
     private TextView tvRemaining;
     private Button btnAutoStart;
+    private Button btnScreenOnStart;
+    private Button btnGoRemote;
+    private View sectionRemote;
+    private ScrollView scrollRoot;
     private TextView tvWatchTime;
     private TextView tvUnlockCount;
     private Button btnRemoteControl;
@@ -88,6 +93,19 @@ public class MainActivity extends AppCompatActivity {
         if (pref.isRemoteControlEnabled()) {
             tryStartRemoteControl();
         }
+        // 升级安装后开机广播可能还没跑过，进设置页也把亮屏监听拉起来
+        if (pref.isScreenOnStart()) {
+            tryStartScreenOnService();
+        }
+    }
+
+    private void tryStartScreenOnService() {
+        try {
+            ScreenOnService.start(this);
+        } catch (Throwable t) {
+            Log.w("MainActivity", "Screen-on service failed to start", t);
+            toast("亮屏自动计时启动失败，锁屏功能不受影响");
+        }
     }
 
     private void tryStartRemoteControl() {
@@ -115,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
         tvStatus = findViewById(R.id.tvStatus);
         tvRemaining = findViewById(R.id.tvRemaining);
         btnAutoStart = findViewById(R.id.btnAutoStart);
+        btnScreenOnStart = findViewById(R.id.btnScreenOnStart);
+        btnGoRemote = findViewById(R.id.btnGoRemote);
+        sectionRemote = findViewById(R.id.sectionRemote);
+        scrollRoot = findViewById(R.id.scrollRoot);
         tvWatchTime = findViewById(R.id.tvWatchTime);
         tvUnlockCount = findViewById(R.id.tvUnlockCount);
         btnRemoteControl = findViewById(R.id.btnRemoteControl);
@@ -130,6 +152,32 @@ public class MainActivity extends AppCompatActivity {
             pref.setAutoStart(newVal);
             updateStatus();
             toast(newVal ? "已开启开机自启" : "已关闭开机自启");
+        });
+
+        // 亮屏自动开始倒计时
+        btnScreenOnStart.setOnClickListener(v -> {
+            boolean newVal = !pref.isScreenOnStart();
+            pref.setScreenOnStart(newVal);
+            try {
+                if (newVal) {
+                    ScreenOnService.start(this);
+                    // 开启时若当前没在计时、也没锁屏，立刻起一轮，避免「开了没反应」
+                    ScreenOnService.trigger(this, "setting_on");
+                    toast("已开启：亮屏自动开始倒计时");
+                } else {
+                    ScreenOnService.stop(this);
+                    toast("已关闭：亮屏自动开始倒计时");
+                }
+            } catch (Throwable t) {
+                Log.w("MainActivity", "Toggle screen-on-start failed", t);
+                toast("操作失败，锁屏功能不受影响");
+            }
+            updateStatus();
+        });
+
+        // 手机扫码控制：一键滚到二维码区块
+        btnGoRemote.setOnClickListener(v -> {
+            scrollRoot.post(() -> scrollRoot.smoothScrollTo(0, sectionRemote.getTop()));
         });
 
         // 观看时长预设
@@ -319,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
         // 开机自启
         btnAutoStart.setText(pref.isAutoStart() ? "开机自启：已开启" : "开机自启：已关闭");
 
+        // 亮屏自动开始倒计时
+        btnScreenOnStart.setText(pref.isScreenOnStart()
+                ? "亮屏自动开始倒计时：已开启（点击关闭）"
+                : "亮屏自动开始倒计时：已关闭（点击开启）");
+
         // 观看时长
         tvWatchTime.setText("观看时长：" + pref.getWatchLimitMinutes() + " 分钟");
 
@@ -327,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 手机控制
         boolean remoteOn = pref.isRemoteControlEnabled();
-        btnRemoteControl.setText(remoteOn ? "手机控制：已开启（点击关闭）" : "手机控制：已关闭（点击开启）");
+        btnRemoteControl.setText(remoteOn ? "手机扫码控制：已开启（点击关闭）" : "手机扫码控制：已关闭（点击开启）");
         String url = remoteOn ? getControlUrl() : null;
         tvRemoteAddress.setText(url != null
                 ? "手机浏览器打开：" + url + "\n需与电视连接同一个 WiFi，用家长 PIN 登录（默认 1234）"

@@ -26,6 +26,7 @@ public class PrefManager {
     private static final String KEY_PIN_LOCK_UNTIL = "pin_lock_until";
     private static final String KEY_REMOTE_ENABLED = "remote_enabled";
     private static final String KEY_REMOTE_PORT = "remote_port";
+    private static final String KEY_SCREEN_ON_START = "screen_on_start";
 
     // Defaults
     private static final boolean DEFAULT_AUTO_START = true;
@@ -34,6 +35,8 @@ public class PrefManager {
     private static final String DEFAULT_PARENT_PIN = "1234";
     private static final boolean DEFAULT_REMOTE_ENABLED = true;
     private static final int DEFAULT_REMOTE_PORT = 8080;
+    // 默认关闭：不改变老用户已有的开机/手动计时行为
+    private static final boolean DEFAULT_SCREEN_ON_START = false;
     private static final int MAX_PIN_FAILS = 5;
     private static final long PIN_LOCKOUT_MS = 30_000;
 
@@ -150,6 +153,15 @@ public class PrefManager {
 
     public void setRemotePort(int port) {
         prefs.edit().putInt(KEY_REMOTE_PORT, port).apply();
+    }
+
+    // --- 亮屏自动开始倒计时 ---
+    public boolean isScreenOnStart() {
+        return prefs.getBoolean(KEY_SCREEN_ON_START, DEFAULT_SCREEN_ON_START);
+    }
+
+    public void setScreenOnStart(boolean enabled) {
+        prefs.edit().putBoolean(KEY_SCREEN_ON_START, enabled).apply();
     }
 
     // --- Helper: start timer ---

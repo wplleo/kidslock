@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/settings_bg"
@@ -37,7 +38,21 @@
             android:layout_height="wrap_content"
             android:textColor="@color/highlight"
             android:textSize="@dimen/text_body"
-            android:layout_marginBottom="@dimen/spacing_large" />
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <!-- 手机扫码控制：设置页一级入口，一键跳到下方二维码 -->
+        <Button
+            android:id="@+id/btnGoRemote"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:minWidth="420dp"
+            android:text="@string/btn_go_remote"
+            android:textSize="@dimen/text_button"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
 
         <!-- ===== 计时控制 ===== -->
         <TextView
@@ -122,13 +137,36 @@
             android:id="@+id/btnAutoStart"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/btn_height"
-            android:layout_marginBottom="@dimen/spacing_medium"
+            android:layout_marginBottom="@dimen/spacing_small"
             android:minWidth="300dp"
             android:textSize="@dimen/text_button"
             android:background="@drawable/btn_settings_bg"
             android:textColor="@color/btn_text"
             android:focusable="true"
             android:clickable="true" />
+
+        <!-- 亮屏自动开始倒计时 -->
+        <Button
+            android:id="@+id/btnScreenOnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_height"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:minWidth="420dp"
+            android:textSize="@dimen/text_button"
+            android:background="@drawable/btn_settings_bg"
+            android:textColor="@color/btn_text"
+            android:focusable="true"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_screen_on_start"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="@dimen/spacing_medium" />
 
         <!-- 观看时长 -->
         <TextView
@@ -277,14 +315,26 @@
             android:focusable="true"
             android:clickable="true" />
 
-        <!-- ===== 手机控制 ===== -->
+        <!-- ===== 手机扫码控制 ===== -->
         <TextView
+            android:id="@+id/sectionRemote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/section_remote"
             android:textColor="@color/highlight"
             android:textSize="@dimen/text_subtitle"
+            android:textStyle="bold"
             android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_small" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/section_remote_hint"
+            android:textColor="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
             android:layout_marginBottom="@dimen/spacing_small" />
 
         <Button

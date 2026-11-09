@@ -89,6 +89,17 @@
                 android:value="Children's screen time management timer" />
         </service>
 
+        <!-- 亮屏自动开始倒计时（ACTION_SCREEN_ON 不能静态注册，用常驻服务动态监听） -->
+        <service
+            android:name=".ScreenOnService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Auto start children's screen time countdown when TV screen turns on" />
+        </service>
+
         <!-- 手机控制服务（局域网 HTTP 控制页） -->
         <service
             android:name=".RemoteControlService"
